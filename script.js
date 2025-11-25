@@ -432,15 +432,34 @@ function startBackgroundAnimation(category) {
 function createFallingItem(config) {
     const item = document.createElement('div');
     item.classList.add('falling-item');
-    item.innerHTML = config.animIcon;
+    
+    // Mindig hópihe, de vegyesen használjuk a különböző FontAwesome stílusokat
+    const snowType = Math.random();
+    if (snowType < 0.33) {
+        item.innerHTML = '<i class="fas fa-snowflake"></i>'; // Teli hópihe
+    } else if (snowType < 0.66) {
+        item.innerHTML = '<i class="far fa-snowflake"></i>'; // Üres hópihe
+    } else {
+        item.innerHTML = '<i class="fas fa-asterisk"></i>'; // Csillag alakú (sűrűbb hóhatás)
+    }
+    
     const left = Math.random() * 100;
-    const duration = Math.random() * 5 + 5;
-    const size = Math.random() * 20 + 20;
+    
+    // LASSABB esés, hogy ne legyen zavaró, de folyamatos legyen
+    const duration = Math.random() * 8 + 7; // 7 és 15 másodperc között
+    
+    // NAGYOBB méretek a kérésnek megfelelően
+    // Most már 20px és 45px közötti méretűek lesznek
+    const size = Math.random() * 25 + 20; 
+    
     item.style.left = `${left}%`;
     item.style.animationDuration = `${duration}s`;
     item.style.fontSize = `${size}px`;
     item.style.width = `${size}px`;
-    item.style.color = config.animColor;
+    
+    // Szín variáció: Tiszta fehér vagy nagyon halvány kék
+    item.style.color = Math.random() > 0.8 ? '#e0f7fa' : '#ffffff';
+    
     animContainer.appendChild(item);
     setTimeout(() => { item.remove(); }, duration * 1000);
 }
