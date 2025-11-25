@@ -5,6 +5,7 @@
     <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Magyar GD Ranglista</title>
+    <link rel="icon" type="image/png" href="src/demon-hard.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -132,7 +133,7 @@
             <div class="footer-credits">
                 Tervezés és Dizájn: <span class="footer-name">trexhun</span> <span class="footer-separator">|</span> Fejlesztette: <span class="footer-name">TomYx</span>
             </div>
-            <div class="footer-disclaimer-primary">
+            <div class="footer-disclaimer-secondary">
                 Game assets and sprites belong to <a href="https://www.robtopgames.com/" target="_blank" class="footer-link"><strong>RobTop Games</strong></a>.
             </div>
             <div class="footer-disclaimer-secondary">
@@ -164,6 +165,10 @@
                 <button class="btn-confirm" onclick="executeRefresh()">Igen, Frissítés</button>
             </div>
         </div>
+    </div>
+
+    <div id="toast-notification" class="toast-notification">
+        <i class="fas fa-check-circle"></i> <span id="toast-message"></span>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>

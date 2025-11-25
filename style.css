@@ -77,7 +77,6 @@ body.modal-open {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Navigáció */
 .nav-menu {
     background: rgba(20, 20, 20, 0.8);
     backdrop-filter: blur(10px);
@@ -135,7 +134,6 @@ body.modal-open {
     box-shadow: 0 0 20px var(--theme-color);
 }
 
-/* Ikonok */
 .icon-img {
     object-fit: contain;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
@@ -161,7 +159,6 @@ body.modal-open {
     vertical-align: -3px;
 }
 
-/* Kereső és Gombok */
 .controls-container {
     display: flex;
     justify-content: center;
@@ -227,7 +224,6 @@ body.modal-open {
     transform: rotate(180deg);
 }
 
-/* Ranglista konténer */
 .leaderboard-container {
     background: rgba(20, 20, 20, 0.6);
     backdrop-filter: blur(10px);
@@ -272,7 +268,6 @@ body.modal-open {
 @media (max-width: 768px) { .player-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 576px) { .player-grid { grid-template-columns: 1fr; } }
 
-/* Játékos kártyák */
 .player-card {
     background: var(--bg-card);
     border-radius: 10px;
@@ -362,7 +357,6 @@ body.modal-open {
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
 }
 
-/* Pagination */
 .pagination-container {
     display: flex;
     justify-content: center;
@@ -499,7 +493,6 @@ body.modal-open {
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
 }
 
-/* Footer elemek */
 .main-footer {
     background: rgba(20, 20, 20, 0.9);
     backdrop-filter: blur(10px);
@@ -552,7 +545,6 @@ body.modal-open {
     text-shadow: 0 0 10px rgba(254, 193, 42, 0.3);
 }
 
-/* --- MODÁLIS ABLAK STÍLUSOK --- */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -615,12 +607,6 @@ body.modal-open {
 
 .modal-header-content {
     flex-grow: 1;
-}
-
-.modal-buttons-wrapper {
-    display: flex; 
-    gap: 10px; 
-    margin-top: 15px;
 }
 
 .modal-main-icon {
@@ -723,73 +709,6 @@ body.modal-open {
     filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
 }
 
-/* JS által generált level lista elemek */
-.level-list-wrapper {
-    display: flex; 
-    flex-direction: column; 
-    gap: 10px; 
-    margin-top: 15px;
-}
-
-.level-list-item {
-    background: rgba(0,0,0,0.3);
-    border: 1px solid #444;
-    padding: 15px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: background 0.3s;
-}
-
-.level-list-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.level-list-icon-box {
-    text-align: center; 
-    width: 50px;
-}
-
-.level-difficulty-img {
-    width: 40px; 
-    height: 40px; 
-    object-fit: contain;
-}
-
-.level-stars-text {
-    font-size: 0.8rem; 
-    margin-top: 5px; 
-    color: #ffd700; 
-    font-weight: bold;
-}
-
-.level-list-title {
-    margin: 0; 
-    color: white; 
-    font-weight: bold; 
-    font-size: 1.1rem;
-}
-
-.level-list-stats {
-    font-size: 0.85rem; 
-    color: #aaa; 
-    margin-top: 4px;
-}
-
-.level-stat-separator {
-    margin: 0 8px;
-}
-
-.level-list-link {
-    color: var(--gold); 
-    text-decoration: none; 
-    font-size: 1.2rem; 
-    padding: 10px;
-}
-
 .empty-message {
     text-align: center;
     padding: 20px;
@@ -804,7 +723,7 @@ body.modal-open {
     max-width: 450px;
     width: 90%;
     height: auto;
-    max-height: none; /* Felülírjuk az alapértelmezett modal magasságot */
+    max-height: none; 
     text-align: center;
     border: 1px solid var(--gold);
     box-shadow: 0 0 50px rgba(254, 193, 42, 0.15);
@@ -884,6 +803,35 @@ body.modal-open {
 .btn-cancel:hover {
     background: rgba(255, 255, 255, 0.2);
     border-color: white;
+}
+
+.toast-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(20, 20, 20, 0.95);
+    border: 2px solid var(--gold);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 50px; 
+    z-index: 2000; 
+    display: none; 
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 0 30px rgba(254, 193, 42, 0.3);
+    font-size: 1.1rem;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.toast-notification.show {
+    display: flex;
+    opacity: 1;
+}
+.toast-notification i {
+    color: var(--gold);
+    font-size: 1.5rem;
 }
 
 .modal-content::-webkit-scrollbar { width: 8px; }

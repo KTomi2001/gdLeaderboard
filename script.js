@@ -367,7 +367,6 @@ const HUNGARIAN_LEVELS = HUNGARIAN_LEVELS_UNSORTED;
 const API_BASE = "https://gdbrowser.com/api/profile";
 const MODERATORS = ["kreno", "mag"];
 
-// --- Konfigurációk ---
 const categoryConfig = {
     stars: { 
         apiType: 'stars', 
@@ -422,7 +421,6 @@ const levelsPerPage = 25;
 let animationInterval;
 const animContainer = document.getElementById('bg-animation-container');
 
-// --- Animáció ---
 function startBackgroundAnimation(category) {
     clearInterval(animationInterval);
     animContainer.innerHTML = '';
@@ -447,7 +445,6 @@ function createFallingItem(config) {
     setTimeout(() => { item.remove(); }, duration * 1000);
 }
 
-// --- Adatlekérés ---
 async function fetchAllPlayers(playerList) {
     const batchSize = 15; 
     const delay = 1000; 
@@ -505,7 +502,6 @@ function loadIconsGradually() {
     });
 }
 
-// --- Játékos Kártya ---
 function generatePlayerCard(player, rank, value, iconHtml, borderColor) {
     const isTopThree = rank <= 3;
     const cardClass = `player-card ${isTopThree ? 'top-three' : ''} ${isTopThree ? 'rank-' + rank : ''}`;
@@ -554,10 +550,9 @@ function generatePlayerCard(player, rank, value, iconHtml, borderColor) {
     `;
 }
 
-// --- Level Kártya (Szám és Ikon nélkül) ---
 function generateLevelCard(level, rank) {
     return `
-        <div class="player-card" onclick="window.open('https://gdbrowser.com/${level.id}', '_blank')">
+        <div class="player-card" onclick="copyLevelId('${level.id}')">
             <div class="level-card-content">
                 <div class="level-details">
                     <div class="level-name" title="${level.name}">${level.name}</div>
@@ -569,21 +564,17 @@ function generateLevelCard(level, rank) {
     `;
 }
 
-
-// --- Fő megjelenítő függvény ---
 function renderPlayers(players, category, searchTerm = "") {
     const grid = document.getElementById(`grid-${category}`);
     if (!grid) return;
 
     grid.innerHTML = '';
 
-    // --- SPECIÁLIS ESET: LEVELS (LAPOZÓS) ---
     if (category === 'hun_levels') {
         renderLevelPage(currentLevelPage, searchTerm);
         return;
     }
 
-    // --- NORMÁL PLAYERS ESET ---
     let config = categoryConfig[category];
     let sortKey = config.apiType;
     let displayIcon = config.icon;
@@ -624,7 +615,6 @@ function renderPlayers(players, category, searchTerm = "") {
     loadIconsGradually();
 }
 
-// --- LEVEL LAPOZÁS ---
 function renderLevelPage(pageIndex, searchTerm = "") {
     const grid = document.getElementById('grid-hun_levels');
     if (!grid) return;
@@ -685,100 +675,23 @@ function updatePaginationControls(current, total) {
     });
 }
 
-// Lapozó gomb eseménykezelők
 ['top', 'bottom'].forEach(pos => {
-    document.getElementById(`prev-page-${pos}`).addEventListener('click', () => {
-        renderLevelPage(currentLevelPage - 1, document.getElementById('player-search').value);
-        window.scrollTo({ top: document.getElementById('hun_levels').offsetTop - 100, behavior: 'smooth' });
-    });
-    document.getElementById(`next-page-${pos}`).addEventListener('click', () => {
-        renderLevelPage(currentLevelPage + 1, document.getElementById('player-search').value);
-        window.scrollTo({ top: document.getElementById('hun_levels').offsetTop - 100, behavior: 'smooth' });
-    });
-});
-
-
-// --- PÁLYÁK LEKÉRDEZÉSE (Player Modal) ---
-
-async function loadUserLevels(playerID, containerID) {
-    const container = document.getElementById(containerID);
-    container.innerHTML = '<div class="empty-message"><i class="fas fa-circle-notch fa-spin"></i> Pályák betöltése...</div>';
-
-    try {
-        const targetUrl = `https://gdbrowser.com/api/search/*?user=${playerID}&page=0`;
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-
-        const response = await fetch(proxyUrl);
-        const data = await response.json();
-
-        if (!data.contents) throw new Error("Üres válasz a proxytól");
-        
-        let levels = [];
-        try {
-            levels = JSON.parse(data.contents);
-        } catch(e) {
-            if (data.contents == "-1") levels = [];
-            else throw e;
-        }
-
-        if (!Array.isArray(levels) || levels.length === 0) {
-             container.innerHTML = '<div class="empty-message">Nincsenek találatok.</div>';
-             return;
-        }
-
-        const ratedLevels = levels.filter(lvl => lvl.stars > 0);
-
-        if (ratedLevels.length === 0) {
-            container.innerHTML = '<div class="empty-message">Ennek a játékosnak nincsenek rated pályái (az első oldalon).</div>';
-            return;
-        }
-
-        let html = '<div class="level-list-wrapper">';
-        
-        ratedLevels.forEach(level => {
-            let fileName = 'na';
-            if (level.auto) fileName = 'auto';
-            else if (level.demon) fileName = 'demon-hard'; 
-            else fileName = level.difficulty.toLowerCase();
-            
-            const diffIcon = `https://gdbrowser.com/assets/difficultyFaces/${fileName}.png`;
-            
-            html += `
-                <div class="level-list-item">
-                    <div class="level-list-left">
-                        <div class="level-list-icon-box">
-                             <img src="${diffIcon}" class="level-difficulty-img" onerror="this.src='https://gdbrowser.com/assets/difficultyFaces/na.png'">
-                             <div class="level-stars-text">${level.stars} <i class="fas fa-star"></i></div>
-                        </div>
-                        
-                        <div>
-                            <h4 class="level-list-title">${level.name}</h4>
-                            <div class="level-list-stats">
-                                ID: <span style="color:white;">${level.id}</span> 
-                                <span class="level-stat-separator">|</span> 
-                                <i class="fas fa-download"></i> ${new Intl.NumberFormat().format(level.downloads)}
-                                <span class="level-stat-separator">|</span> 
-                                <i class="fas fa-thumbs-up"></i> ${new Intl.NumberFormat().format(level.likes)}
-                            </div>
-                        </div>
-                    </div>
-                    <a href="https://gdbrowser.com/${level.id}" target="_blank" class="level-list-link">
-                        <i class="fas fa-external-link-alt"></i>
-                    </a>
-                </div>
-            `;
+    const prevBtn = document.getElementById(`prev-page-${pos}`);
+    const nextBtn = document.getElementById(`next-page-${pos}`);
+    
+    if(prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            renderLevelPage(currentLevelPage - 1, document.getElementById('player-search').value);
+            window.scrollTo({ top: document.getElementById('hun_levels').offsetTop - 100, behavior: 'smooth' });
         });
-        
-        html += '</div>';
-        container.innerHTML = html;
-
-    } catch (error) {
-        console.error(error);
-        container.innerHTML = '<div class="empty-message error-text">Hiba a pályák betöltésekor (Szerver hiba).</div>';
     }
-}
-
-// --- MODÁLIS ABLAK KEZELÉSE ---
+    if(nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            renderLevelPage(currentLevelPage + 1, document.getElementById('player-search').value);
+            window.scrollTo({ top: document.getElementById('hun_levels').offsetTop - 100, behavior: 'smooth' });
+        });
+    }
+});
 
 function openModal(username) {
     const playerData = GLOBAL_PLAYER_DATA.find(p => p.username === username);
@@ -786,7 +699,6 @@ function openModal(username) {
 
     const modalBody = document.getElementById('modal-body');
     
-    // Helper function to calculate rank for a specific stat
     const getRank = (statKey) => {
         const sorted = [...GLOBAL_PLAYER_DATA].sort((a, b) => (b[statKey] || 0) - (a[statKey] || 0));
         return sorted.findIndex(p => p.username === username) + 1;
@@ -850,11 +762,6 @@ function openModal(username) {
             <img src="${mainIconUrl}" alt="${playerData.username}" class="modal-main-icon">
             <div class="modal-header-content">
                 <h2 class="modal-username">${playerData.username} ${nameBadges}</h2>
-                
-                <div class="modal-buttons-wrapper">
-                    <button onclick="switchTab('stats')" class="btn btn-sm btn-outline-warning active" id="btn-stats"><i class="fas fa-chart-bar"></i> Stats & Icons</button>
-                    <button onclick="switchTab('levels', '${playerData.playerID}')" class="btn btn-sm btn-outline-warning" id="btn-levels"><i class="fas fa-layer-group"></i> Rated Levels</button>
-                </div>
             </div>
         </div>
 
@@ -903,33 +810,11 @@ function openModal(username) {
                  ${socialLinksHtml}
             </div>
         </div>
-
-        <div id="tab-levels" style="display: none;">
-            <div class="modal-subtitle"><i class="fas fa-star me-2"></i>Created Levels (Rated)</div>
-            <div id="levels-container"></div>
-        </div>
     `;
 
     document.getElementById('profile-modal').style.display = 'flex';
     document.body.classList.add('modal-open');
 }
-
-window.switchTab = function(tabName, playerID = null) {
-    document.getElementById('tab-stats').style.display = (tabName === 'stats') ? 'block' : 'none';
-    document.getElementById('tab-levels').style.display = (tabName === 'levels') ? 'block' : 'none';
-    
-    document.getElementById('btn-stats').classList.toggle('active', tabName === 'stats');
-    document.getElementById('btn-levels').classList.toggle('active', tabName === 'levels');
-
-    if (tabName === 'levels' && playerID) {
-        const container = document.getElementById('levels-container');
-        if (container.innerHTML === '') {
-            loadUserLevels(playerID, 'levels-container');
-        }
-    }
-}
-
-// --- Eseménykezelők és Inicializálás ---
 
 async function handleCategoryChange(category) {
     currentCategoryType = category;
@@ -943,7 +828,6 @@ async function handleCategoryChange(category) {
     try {
         if (category === 'hun_levels') {
              if(loading) loading.style.display = 'none';
-             // Reset to page 0 on category switch
              currentLevelPage = 0;
              renderPlayers([], category, searchInput ? searchInput.value : "");
              return;
@@ -988,31 +872,25 @@ function retryFetch() {
 function forceRefresh() {
     if(IS_FETCHING) return; 
     
-    // Megnyitjuk a saját modális ablakunkat
     const modal = document.getElementById('confirmation-modal');
     modal.style.display = 'flex';
-    // Kis animáció az ablaknak
     modal.querySelector('.confirmation-box').style.animation = 'slideUpModal 0.3s ease';
 }
 
-// Ez zárja be az ablakot (Mégse gomb)
 function closeConfirmationModal() {
     const modal = document.getElementById('confirmation-modal');
     modal.style.display = 'none';
 }
 
-// Ez fut le, ha a felhasználó az "Igen, Frissítés" gombra nyom
 function executeRefresh() {
     closeConfirmationModal();
     
-    // Itt történik a tényleges frissítés (a régi logika)
     GLOBAL_PLAYER_DATA = null;
     const grids = document.querySelectorAll('.player-grid');
     grids.forEach(g => g.innerHTML = '');
     handleCategoryChange(currentCategoryType);
 }
 
-// Bezárás kattintásra a sötét háttérre (Confirmation modal)
 document.getElementById('confirmation-modal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeConfirmationModal();
@@ -1070,3 +948,27 @@ document.getElementById('profile-modal').addEventListener('click', function(e) {
         closeModal();
     }
 });
+
+function copyLevelId(id) {
+    navigator.clipboard.writeText(id).then(() => {
+        showToast(`A pálya azonosítója a vágólapra másolva!`);
+    }).catch(err => {
+        console.error('Hiba a másoláskor:', err);
+        showToast('Sikertelen másolás');
+    });
+}
+
+let toastTimeout;
+function showToast(message) {
+    const toast = document.getElementById('toast-notification');
+    const msgSpan = document.getElementById('toast-message');
+
+    msgSpan.innerText = message;
+    toast.classList.add('show');
+
+    if (toastTimeout) clearTimeout(toastTimeout);
+
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 5000);
+}
